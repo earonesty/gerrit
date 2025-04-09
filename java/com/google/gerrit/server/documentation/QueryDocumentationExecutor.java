@@ -19,6 +19,7 @@ import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.common.Nullable;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.github.pixee.security.ZipSecurity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -113,7 +114,7 @@ public class QueryDocumentationExecutor {
       return null;
     }
 
-    try (ZipInputStream zip = new ZipInputStream(index)) {
+    try (ZipInputStream zip = ZipSecurity.createHardenedInputStream(index)) {
       ZipEntry entry;
       while ((entry = zip.getNextEntry()) != null) {
         try (IndexOutput out = dir.createOutput(entry.getName(), null)) {
