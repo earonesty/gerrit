@@ -28,6 +28,7 @@ import com.google.gerrit.server.config.SitePaths;
 import com.google.gerrit.server.mail.SignedToken;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.github.pixee.security.SystemCommand;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -222,9 +223,7 @@ class InitHttpd implements InitStep {
     chmod(0600, tmpdir);
 
     Path tmpstore = tmpdir.resolve("keystore");
-    Runtime.getRuntime()
-        .exec(
-            new String[] {
+    SystemCommand.runCommand(Runtime.getRuntime(), new String[] {
               "keytool", //
               "-keystore",
               tmpstore.toAbsolutePath().toString(), //

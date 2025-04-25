@@ -14,6 +14,7 @@
 
 package com.google.gerrit.pgm;
 
+import io.github.pixee.security.SystemCommand;
 import static java.util.stream.Collectors.joining;
 
 import com.google.common.base.Joiner;
@@ -245,7 +246,7 @@ public class Init extends BaseInit {
     Process proc;
     try {
       System.err.println("Executing " + argv[0] + " " + argv[1]);
-      proc = Runtime.getRuntime().exec(argv);
+      proc = SystemCommand.runCommand(Runtime.getRuntime(), argv);
     } catch (IOException e) {
       System.err.println("error: cannot start Gerrit: " + e.getMessage());
       return;
