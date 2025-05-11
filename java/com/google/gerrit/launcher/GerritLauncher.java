@@ -508,7 +508,7 @@ public final class GerritLauncher {
    */
   public static synchronized File createTempFile(String prefix, String suffix) throws IOException {
     if (!temporaryDirectoryFound) {
-      final File d = File.createTempFile("gerrit_", "_app", tmproot());
+      final File d = Files.createTempFile(tmproot().toPath(), "gerrit_", "_app").toFile();
       if (d.delete() && d.mkdir()) {
         // Try to lock the directory down to be accessible by us.
         // We first have to remove all permissions, then add back
@@ -543,7 +543,7 @@ public final class GerritLauncher {
       prefix += "_";
     }
 
-    final File tmp = File.createTempFile(prefix, suffix, temporaryDirectory);
+    final File tmp = Files.createTempFile(temporaryDirectory.toPath(), prefix, suffix).toFile();
     tmp.deleteOnExit();
     return tmp;
   }

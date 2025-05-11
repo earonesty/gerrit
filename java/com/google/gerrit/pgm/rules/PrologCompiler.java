@@ -96,7 +96,7 @@ public class PrologCompiler implements Callable<PrologCompiler.Status> {
     }
     Files.createDirectories(ruleDir);
 
-    File tempDir = File.createTempFile("GerritCodeReview_", ".rulec");
+    File tempDir = Files.createTempFile("GerritCodeReview_", ".rulec").toFile();
     if (!tempDir.delete() || !tempDir.mkdir()) {
       throw new IOException("Cannot create " + tempDir);
     }
@@ -135,7 +135,7 @@ public class PrologCompiler implements Callable<PrologCompiler.Status> {
       throws IOException, FileNotFoundException, MissingObjectException {
     // Any leak of tmp caused by this method failing will be cleaned
     // up by our caller when tempDir is recursively deleted.
-    File tmp = File.createTempFile("rules", ".pl", tempDir);
+    File tmp = Files.createTempFile(tempDir.toPath(), "rules", ".pl").toFile();
     try (OutputStream out = Files.newOutputStream(tmp.toPath())) {
       git.open(blobId).copyTo(out);
     }

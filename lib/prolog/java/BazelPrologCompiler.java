@@ -36,7 +36,7 @@ public class BazelPrologCompiler {
   }
 
   private static File tmpdir(String name) throws IOException {
-    File d = File.createTempFile(name + "_", "", tmpdir);
+    File d = Files.createTempFile(tmpdir.toPath(), name + "_", "").toFile();
     if (!d.delete() || !d.mkdir()) {
       throw new IOException("Cannot mkdir " + d);
     }
@@ -44,7 +44,7 @@ public class BazelPrologCompiler {
   }
 
   private static void jar(File jar, File classes) throws IOException {
-    File tmp = File.createTempFile("prolog", ".jar", tmpdir);
+    File tmp = Files.createTempFile(tmpdir.toPath(), "prolog", ".jar").toFile();
     try {
       try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(tmp.toPath()))) {
         add(out, classes, "");

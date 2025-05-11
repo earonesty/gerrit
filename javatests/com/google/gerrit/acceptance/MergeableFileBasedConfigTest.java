@@ -106,7 +106,7 @@ public class MergeableFileBasedConfigTest {
   }
 
   private MergeableFileBasedConfig newConfig() throws Exception {
-    File f = File.createTempFile(getClass().getSimpleName(), ".config");
+    File f = Files.createTempFile(getClass().getSimpleName(), ".config").toFile();
     f.deleteOnExit();
     return new MergeableFileBasedConfig(f, FS.detect());
   }
