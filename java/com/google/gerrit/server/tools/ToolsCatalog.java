@@ -14,6 +14,7 @@
 
 package com.google.gerrit.server.tools;
 
+import io.github.pixee.security.BoundedLineReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.Strings;
@@ -78,7 +79,7 @@ public class ToolsCatalog {
     final BufferedReader br =
         new BufferedReader(new InputStreamReader(new ByteArrayInputStream(read("TOC")), UTF_8));
     String line;
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
       if (line.length() > 0 && !line.startsWith("#")) {
         final Entry e = new Entry(Entry.Type.FILE, line);
         toc.put(e.getPath(), e);

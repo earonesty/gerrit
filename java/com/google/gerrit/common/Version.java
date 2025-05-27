@@ -14,6 +14,7 @@
 
 package com.google.gerrit.common;
 
+import io.github.pixee.security.BoundedLineReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -44,7 +45,7 @@ public class Version {
         return DEV;
       }
       try (BufferedReader r = new BufferedReader(new InputStreamReader(in, UTF_8))) {
-        String vs = r.readLine();
+        String vs = BoundedLineReader.readLine(r, 5_000_000);
         if (vs != null && vs.startsWith("v")) {
           vs = vs.substring(1);
         }

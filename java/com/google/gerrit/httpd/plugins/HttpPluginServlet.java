@@ -22,6 +22,7 @@ import static com.google.common.net.HttpHeaders.VARY;
 import static com.google.gerrit.common.FileUtil.lastModified;
 import static com.google.gerrit.server.plugins.PluginEntry.ATTR_CHARACTER_ENCODING;
 import static com.google.gerrit.server.plugins.PluginEntry.ATTR_CONTENT_TYPE;
+import io.github.pixee.security.BoundedLineReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 
@@ -367,7 +368,7 @@ class HttpPluginServlet extends HttpServlet implements StartPluginListener, Relo
     StringBuilder content = new StringBuilder();
     try (BufferedReader reader = new BufferedReader(isr)) {
       String line;
-      while ((line = reader.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         line = StringUtils.stripEnd(line, null);
         if (line.isEmpty()) {
           content.append("\n");

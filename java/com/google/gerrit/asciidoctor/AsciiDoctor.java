@@ -14,6 +14,7 @@
 
 package com.google.gerrit.asciidoctor;
 
+import io.github.pixee.security.BoundedLineReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.io.ByteStreams;
@@ -153,7 +154,7 @@ public class AsciiDoctor {
 
     if (revnumberFile != null) {
       try (BufferedReader reader = Files.newBufferedReader(revnumberFile.toPath(), UTF_8)) {
-        revnumber = reader.readLine();
+        revnumber = BoundedLineReader.readLine(reader, 5_000_000);
       }
     }
 

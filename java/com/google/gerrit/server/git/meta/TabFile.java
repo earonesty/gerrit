@@ -19,6 +19,7 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import com.google.common.collect.ImmutableList;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.server.git.ValidationError;
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -53,7 +54,7 @@ public class TabFile {
     List<Row> rows = new ArrayList<>();
     BufferedReader br = new BufferedReader(new StringReader(text));
     String s;
-    for (int lineNumber = 1; (s = br.readLine()) != null; lineNumber++) {
+    for (int lineNumber = 1; (s = BoundedLineReader.readLine(br, 5_000_000)) != null; lineNumber++) {
       if (s.isEmpty() || s.startsWith("#")) {
         continue;
       }

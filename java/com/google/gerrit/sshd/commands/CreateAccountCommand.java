@@ -14,6 +14,7 @@
 
 package com.google.gerrit.sshd.commands;
 
+import io.github.pixee.security.BoundedLineReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.collect.Lists;
@@ -99,7 +100,7 @@ final class CreateAccountCommand extends SshCommand {
       sshKey = "";
       BufferedReader br = new BufferedReader(new InputStreamReader(in, UTF_8));
       String line;
-      while ((line = br.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
         sshKey += line + "\n";
       }
     }

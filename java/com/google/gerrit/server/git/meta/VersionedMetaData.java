@@ -31,6 +31,7 @@ import com.google.gerrit.server.logging.TraceContext;
 import com.google.gerrit.server.logging.TraceContext.TraceTimer;
 import com.google.gerrit.server.update.context.RefUpdateContext;
 import com.google.gerrit.server.util.CommitMessageUtil;
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -495,7 +496,7 @@ public abstract class VersionedMetaData {
           }
           try (BufferedReader reader = new BufferedReader(new StringReader(message))) {
             // read the subject line and use it as reflog message
-            ru.setRefLogMessage("commit: " + reader.readLine(), true);
+            ru.setRefLogMessage("commit: " + BoundedLineReader.readLine(reader, 5_000_000), true);
           }
           logger.atFine().log("Saving commit '%s' on project '%s'", message.trim(), projectName);
           inserter.flush();

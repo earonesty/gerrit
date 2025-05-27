@@ -14,6 +14,7 @@
 
 package com.google.gerrit.sshd.commands;
 
+import io.github.pixee.security.BoundedLineReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 
@@ -391,7 +392,7 @@ final class SetAccountCommand extends SshCommand {
         StringBuilder sshKey = new StringBuilder();
         BufferedReader br = new BufferedReader(new InputStreamReader(in, UTF_8));
         String line;
-        while ((line = br.readLine()) != null) {
+        while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
           sshKey.append(line).append("\n");
         }
         sshKeys.set(idx, sshKey.toString());

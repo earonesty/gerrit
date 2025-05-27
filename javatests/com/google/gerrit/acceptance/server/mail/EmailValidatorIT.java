@@ -16,6 +16,7 @@ package com.google.gerrit.acceptance.server.mail;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
+import io.github.pixee.security.BoundedLineReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.gerrit.acceptance.AbstractDaemonTest;
@@ -78,7 +79,7 @@ public class EmailValidatorIT extends AbstractDaemonTest {
       }
       BufferedReader r = new BufferedReader(new InputStreamReader(in, UTF_8));
       String tld;
-      while ((tld = r.readLine()) != null) {
+      while ((tld = BoundedLineReader.readLine(r, 5_000_000)) != null) {
         if (tld.startsWith("# ") || tld.startsWith("XN--")) {
           // Ignore comments and non-latin domains
           continue;

@@ -15,6 +15,7 @@
 package com.google.gerrit.sshd;
 
 import static com.google.common.base.Preconditions.checkState;
+import io.github.pixee.security.BoundedLineReader;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -195,7 +196,7 @@ class DatabasePubKeyAuth implements PublickeyAuthenticator {
       try (BufferedReader br = Files.newBufferedReader(path, UTF_8)) {
         final Set<PublicKey> keys = new HashSet<>();
         String line;
-        while ((line = br.readLine()) != null) {
+        while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
           line = line.trim();
           if (line.startsWith("#") || line.isEmpty()) {
             continue;

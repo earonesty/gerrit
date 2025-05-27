@@ -14,6 +14,7 @@
 
 package com.google.gerrit.asciidoctor;
 
+import io.github.pixee.security.BoundedLineReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.gerrit.server.documentation.Constants;
@@ -107,7 +108,7 @@ public class DocIndexer {
 
         String title;
         try (BufferedReader titleReader = Files.newBufferedReader(file.toPath(), UTF_8)) {
-          while ((title = titleReader.readLine()) != null) {
+          while ((title = BoundedLineReader.readLine(titleReader, 5_000_000)) != null) {
             // Generally the first line of the txt is the title. In a few cases the
             // first lines are "[[tag]]" and or ":attribute:" and the next line
             // after those  is the title.

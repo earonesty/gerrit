@@ -21,6 +21,7 @@ import com.google.gerrit.server.IdentifiedUser;
 import com.google.gerrit.server.account.AccountSshKey;
 import com.google.gerrit.sshd.BaseCommand.Failure;
 import com.google.gerrit.sshd.SshScope.Context;
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -79,19 +80,19 @@ public class SshUtil {
     try {
       final StringBuilder strBuf = new StringBuilder();
       final BufferedReader br = new BufferedReader(new StringReader(keyStr));
-      String line = br.readLine(); // BEGIN SSH2 line...
+      String line = BoundedLineReader.readLine(br, 5_000_000); // BEGIN SSH2 line...
       if (line == null || !line.equals("---- BEGIN SSH2 PUBLIC KEY ----")) {
         return keyStr;
       }
 
-      while ((line = br.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
         if (line.indexOf(':') == -1) {
           strBuf.append(line);
           break;
         }
       }
 
-      while ((line = br.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
         if (line.startsWith("---- ")) {
           break;
         }
