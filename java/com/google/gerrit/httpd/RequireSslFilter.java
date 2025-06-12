@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
+import io.github.pixee.security.Newlines;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -83,7 +84,7 @@ public class RequireSslFilter implements Filter {
         url = urlProvider.get() + req.getServletPath();
       }
       rsp.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-      rsp.setHeader("Location", url);
+      rsp.setHeader("Location", Newlines.stripAll(url));
     }
   }
 

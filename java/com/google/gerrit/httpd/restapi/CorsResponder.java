@@ -25,6 +25,7 @@ import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static com.google.common.net.HttpHeaders.ORIGIN;
 import static com.google.common.net.HttpHeaders.VARY;
+import io.github.pixee.security.Newlines;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 import com.google.common.base.Joiner;
@@ -108,7 +109,7 @@ public class CorsResponder {
         throw new BadRequestException("origin not allowed");
       }
       res.addHeader(VARY, ORIGIN);
-      res.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+      res.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, Newlines.stripAll(origin));
       res.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
     } else if (!Strings.isNullOrEmpty(origin)) {
       // All other requests must be processed, but conditionally set CORS headers.
@@ -155,7 +156,7 @@ public class CorsResponder {
   }
 
   private static void setCorsHeaders(HttpServletResponse res, String origin) {
-    res.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+    res.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, Newlines.stripAll(origin));
     res.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
     res.setHeader(ACCESS_CONTROL_MAX_AGE, "600");
     setHeaderList(
@@ -166,7 +167,7 @@ public class CorsResponder {
   }
 
   private static void setHeaderList(HttpServletResponse res, String name, Iterable<String> values) {
-    res.setHeader(name, Joiner.on(", ").join(values));
+    res.setHeader(name, Newlines.stripAll(Joiner.on(", ").join(values)));
   }
 
   private boolean isOriginAllowed(String origin) {

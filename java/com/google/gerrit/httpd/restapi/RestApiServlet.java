@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static com.google.gerrit.httpd.EnableTracingFilter.REQUEST_TRACE_CONTEXT;
+import io.github.pixee.security.Newlines;
 import static java.math.RoundingMode.CEILING;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -604,13 +605,13 @@ public class RestApiServlet extends HttpServlet {
           } else if (response instanceof Response.Accepted) {
             CacheHeaders.setNotCacheable(res);
             res.setStatus(response.statusCode());
-            res.setHeader(HttpHeaders.LOCATION, ((Response.Accepted) response).location());
+            res.setHeader(HttpHeaders.LOCATION, Newlines.stripAll(((Response.Accepted) response).location()));
             logger.atFinest().log("REST call succeeded: %d", response.statusCode());
             return;
           }
 
           statusCode = response.statusCode();
-          response.headers().forEach((k, v) -> res.setHeader(k, v));
+          response.headers().forEach((k, v) -> res.setHeader(k, Newlines.stripAll(v)));
           configureCaching(req, res, rsrc, response.caching());
           res.setStatus(statusCode);
           logger.atFinest().log("REST call succeeded: %d", statusCode);
@@ -1341,7 +1342,7 @@ public class RestApiServlet extends HttpServlet {
     try {
       if (bin.getAttachmentName() != null) {
         res.setHeader(
-            "Content-Disposition", "attachment; filename=\"" + bin.getAttachmentName() + "\"");
+            "Content-Disposition", Newlines.stripAll("attachment; filename=\"" + bin.getAttachmentName() + "\""));
       }
       if (bin.isBase64()) {
         if (req != null && JSON_TYPE.equals(req.getHeader(HttpHeaders.ACCEPT))) {
@@ -1359,7 +1360,7 @@ public class RestApiServlet extends HttpServlet {
       if (0 <= len && len < Integer.MAX_VALUE) {
         res.setContentLength((int) len);
       } else if (0 <= len) {
-        res.setHeader("Content-Length", Long.toString(len));
+        res.setHeader("Content-Length", Newlines.stripAll(Long.toString(len)));
       }
 
       if (req == null || !"HEAD".equals(req.getMethod())) {
@@ -1386,7 +1387,7 @@ public class RestApiServlet extends HttpServlet {
       w.write('\n');
     }
     res.setHeader("X-FYI-Content-Encoding", "json");
-    res.setHeader("X-FYI-Content-Type", src.getContentType());
+    res.setHeader("X-FYI-Content-Type", Newlines.stripAll(src.getContentType()));
     return asBinaryResult(buf).setContentType(JSON_TYPE).setCharacterEncoding(UTF_8);
   }
 
@@ -1417,7 +1418,7 @@ public class RestApiServlet extends HttpServlet {
           };
     }
     res.setHeader("X-FYI-Content-Encoding", "base64");
-    res.setHeader("X-FYI-Content-Type", src.getContentType());
+    res.setHeader("X-FYI-Content-Type", Newlines.stripAll(src.getContentType()));
     return b64.setContentType(PLAIN_TEXT).setCharacterEncoding(ISO_8859_1);
   }
 

@@ -19,6 +19,7 @@ import static com.google.common.net.HttpHeaders.ETAG;
 import static com.google.common.net.HttpHeaders.IF_MODIFIED_SINCE;
 import static com.google.common.net.HttpHeaders.IF_NONE_MATCH;
 import static com.google.common.net.HttpHeaders.LAST_MODIFIED;
+import io.github.pixee.security.Newlines;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -225,7 +226,7 @@ public abstract class ResourceServlet extends HttpServlet {
     }
 
     if (!requiresPostProcess && cacheOnClient) {
-      rsp.setHeader(ETAG, r.etag);
+      rsp.setHeader(ETAG, Newlines.stripAll(r.etag));
     } else {
       CacheHeaders.setNotCacheable(rsp);
     }

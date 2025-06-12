@@ -18,6 +18,7 @@ import com.google.gerrit.server.config.CanonicalWebUrl;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import io.github.pixee.security.Newlines;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -40,7 +41,7 @@ class XrdsFilter implements Filter {
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
     HttpServletResponse rsp = (HttpServletResponse) response;
-    rsp.setHeader("X-XRDS-Location", url.get() + XrdsServlet.LOCATION);
+    rsp.setHeader("X-XRDS-Location", Newlines.stripAll(url.get() + XrdsServlet.LOCATION));
     chain.doFilter(request, response);
   }
 

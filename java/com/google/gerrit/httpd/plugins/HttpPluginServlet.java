@@ -22,6 +22,7 @@ import static com.google.common.net.HttpHeaders.VARY;
 import static com.google.gerrit.common.FileUtil.lastModified;
 import static com.google.gerrit.server.plugins.PluginEntry.ATTR_CHARACTER_ENCODING;
 import static com.google.gerrit.server.plugins.PluginEntry.ATTR_CONTENT_TYPE;
+import io.github.pixee.security.Newlines;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 
@@ -347,7 +348,7 @@ class HttpPluginServlet extends HttpServlet implements StartPluginListener, Relo
   }
 
   private void setCorsHeaders(HttpServletResponse res, String origin) {
-    res.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+    res.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, Newlines.stripAll(origin));
     res.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
     res.setHeader(ACCESS_CONTROL_ALLOW_METHODS, "GET, HEAD");
   }
@@ -653,7 +654,7 @@ class HttpPluginServlet extends HttpServlet implements StartPluginListener, Relo
       res.setDateHeader("Last-Modified", time);
     }
     if (size.isPresent()) {
-      res.setHeader("Content-Length", size.get().toString());
+      res.setHeader("Content-Length", Newlines.stripAll(size.get().toString()));
     }
     res.setContentType(contentType);
     if (charEnc != null) {
@@ -677,7 +678,7 @@ class HttpPluginServlet extends HttpServlet implements StartPluginListener, Relo
       throws IOException {
     Path path = plugin.getSrcFile();
     if (req.getRequestURI().endsWith(getJsPluginPath(plugin)) && Files.exists(path)) {
-      res.setHeader("Content-Length", Long.toString(Files.size(path)));
+      res.setHeader("Content-Length", Newlines.stripAll(Long.toString(Files.size(path))));
       if (path.toString().toLowerCase(Locale.US).endsWith(".html")) {
         res.setContentType("text/html");
       } else {

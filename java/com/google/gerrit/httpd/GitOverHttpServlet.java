@@ -14,6 +14,7 @@
 
 package com.google.gerrit.httpd;
 
+import io.github.pixee.security.Newlines;
 import static org.eclipse.jgit.http.server.GitSmartHttpTools.sendError;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -494,11 +495,11 @@ public class GitOverHttpServlet extends GitServlet {
         throws IOException {
       try {
         r.upload();
-        rsp.setHeader(GIT_COMMAND_STATUS_HEADER, GIT_COMMAND_STATUS.OK.toString());
+        rsp.setHeader(GIT_COMMAND_STATUS_HEADER, Newlines.stripAll(GIT_COMMAND_STATUS.OK.toString()));
       } catch (ServiceMayNotContinueException e) {
         if (!e.isOutput() && !rsp.isCommitted()) {
           rsp.reset();
-          rsp.setHeader(GIT_COMMAND_STATUS_HEADER, GIT_COMMAND_STATUS.MAY_NOT_CONTINUE.toString());
+          rsp.setHeader(GIT_COMMAND_STATUS_HEADER, Newlines.stripAll(GIT_COMMAND_STATUS.MAY_NOT_CONTINUE.toString()));
           sendError(req, rsp, e.getStatusCode(), e.getMessage());
         }
       } catch (Throwable e) {
@@ -509,7 +510,7 @@ public class GitOverHttpServlet extends GitServlet {
                 ServletUtils.getRepository(req)));
         if (!rsp.isCommitted()) {
           rsp.reset();
-          rsp.setHeader(GIT_COMMAND_STATUS_HEADER, GIT_COMMAND_STATUS.FAIL.toString());
+          rsp.setHeader(GIT_COMMAND_STATUS_HEADER, Newlines.stripAll(GIT_COMMAND_STATUS.FAIL.toString()));
           String msg = e instanceof PackProtocolException ? e.getMessage() : null;
           sendError(req, rsp, UploadPackErrorHandler.statusCodeForThrowable(e), msg);
         }

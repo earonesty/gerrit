@@ -14,6 +14,7 @@
 
 package com.google.gerrit.util.http;
 
+import io.github.pixee.security.Newlines;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -135,9 +136,9 @@ public class CacheHeaders {
       HttpServletResponse res, String type, long age, TimeUnit unit, boolean revalidate) {
     res.setHeader(
         "Cache-Control",
-        String.format(
+        Newlines.stripAll(String.format(
             "%s, max-age=%d%s",
-            type, maxAgeSeconds(age, unit), revalidate ? ", must-revalidate" : ""));
+            type, maxAgeSeconds(age, unit), revalidate ? ", must-revalidate" : "")));
   }
 
   private static long maxAgeSeconds(long age, TimeUnit unit) {

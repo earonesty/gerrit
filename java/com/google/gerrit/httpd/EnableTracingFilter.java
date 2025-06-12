@@ -21,6 +21,7 @@ import com.google.gerrit.httpd.restapi.ParameterParser;
 import com.google.gerrit.server.logging.RequestId;
 import com.google.gerrit.server.logging.TraceContext;
 import com.google.inject.Singleton;
+import io.github.pixee.security.Newlines;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -83,7 +84,7 @@ public class EnableTracingFilter implements Filter {
     // generated.
     TraceContext traceContext =
         TraceContext.newTrace(
-            forceLogging, traceId1, (tagName, traceId) -> res.setHeader(X_GERRIT_TRACE, traceId));
+            forceLogging, traceId1, (tagName, traceId) -> res.setHeader(X_GERRIT_TRACE, Newlines.stripAll(traceId)));
     // If a second trace ID was specified, add a tag for it as well.
     if (traceId2 != null) {
       traceContext.addTag(RequestId.Type.TRACE_ID, traceId2);
