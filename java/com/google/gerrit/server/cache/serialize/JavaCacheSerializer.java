@@ -15,6 +15,7 @@
 package com.google.gerrit.server.cache.serialize;
 
 import com.google.gerrit.common.Nullable;
+import io.github.pixee.security.ObjectInputFilters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class JavaCacheSerializer<T> implements CacheSerializer<T> {
     Object object;
     try (ByteArrayInputStream bin = new ByteArrayInputStream(in);
         ObjectInputStream oin = new ObjectInputStream(bin)) {
+      ObjectInputFilters.enableObjectFilterIfUnprotected(oin);
       object = oin.readObject();
     } catch (ClassNotFoundException | IOException e) {
       throw new IllegalArgumentException("Failed to deserialize object", e);

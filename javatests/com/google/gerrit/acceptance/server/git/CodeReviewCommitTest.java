@@ -19,6 +19,7 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.server.git.CodeReviewCommit;
 import com.google.gerrit.testing.InMemoryRepositoryManager;
+import io.github.pixee.security.ObjectInputFilters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -58,6 +59,7 @@ public class CodeReviewCommitTest {
       out.flush();
       try (ByteArrayInputStream fileIn = new ByteArrayInputStream(bos.toByteArray());
           ObjectInputStream in = new ObjectInputStream(fileIn); ) {
+        ObjectInputFilters.enableObjectFilterIfUnprotected(in);
         return (CodeReviewCommit) in.readObject();
       }
     }
