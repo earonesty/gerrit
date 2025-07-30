@@ -29,6 +29,7 @@
 
 package com.google.gerrit.httpd.gitweb;
 
+import io.github.pixee.security.SystemCommand;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -498,11 +499,7 @@ class GitwebServlet extends HttpServlet {
   private void exec(HttpServletRequest req, HttpServletResponse rsp, ProjectState projectState)
       throws IOException {
     final Process proc =
-        Runtime.getRuntime()
-            .exec(
-                new String[] {gitwebCgi.toAbsolutePath().toString()},
-                makeEnv(req, projectState),
-                gitwebCgi.toAbsolutePath().getParent().toFile());
+        SystemCommand.runCommand(Runtime.getRuntime(), new String[] {gitwebCgi.toAbsolutePath().toString()}, makeEnv(req, projectState), gitwebCgi.toAbsolutePath().getParent().toFile());
 
     copyStderrToLog(proc.getErrorStream());
     if (0 < req.getContentLength()) {
